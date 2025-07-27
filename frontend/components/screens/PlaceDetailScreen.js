@@ -74,7 +74,7 @@ const PlaceDetailScreen = ({ route, navigation }) => {
       </View>
 
       <Text style={styles.title}>{place.name}</Text>
-      <Text style={styles.price}>${place.price_per_night} / night</Text>
+      <Text style={styles.price}>Rs.{place.price_per_night} / night</Text>
       <Text style={styles.description}>{place.description}</Text>
 
       <Text style={styles.facilitiesTitle}>Facilities</Text>
@@ -176,7 +176,7 @@ const PlaceDetailScreen = ({ route, navigation }) => {
   }}
 />
 
-            <Text style={styles.totalAmount}>Total: ${total.toFixed(2)}</Text>
+            <Text style={styles.totalAmount}>Total: Rs.{total.toFixed(2)}</Text>
 
             <TouchableOpacity
               style={styles.button}

@@ -18,7 +18,7 @@ const PaymentScreen = ({ route, navigation }) => {
 
   // Validate card information
   const validateCard = () => {
-    if (cardNumber.length < 13 || cardNumber.length > 19) {
+    if (cardNumber.length < 16 ) {
       Alert.alert('Invalid Card', 'Please enter a valid card number');
       return false;
     }
@@ -51,8 +51,8 @@ const PaymentScreen = ({ route, navigation }) => {
         checkin: checkInDate,
         checkout: checkOutDate,
         noofpersons: persons,
-        paymentmethod: paymentType,
-        totalamount: totalAmount, // Make sure to store the total amount
+        payment_type: paymentType,
+        paid_amount: totalAmount, // Make sure to store the total amount
       });
 
       Alert.alert('Success', 'Your payment was successful!');
@@ -103,11 +103,11 @@ const PaymentScreen = ({ route, navigation }) => {
           {nights} night{nights !== 1 ? 's' : ''} × {persons} person{persons !== 1 ? 's' : ''}
         </Text>
         <Text style={styles.summaryText}>
-          ${place.price_per_night} per night
+          Rs.{place.price_per_night} per night
         </Text>
       </View>
 
-      <Text style={styles.totalAmount}>Total: ${totalAmount.toFixed(2)}</Text>
+      <Text style={styles.totalAmount}>Total: Rs.{totalAmount.toFixed(2)}</Text>
 
       <Text style={styles.sectionTitle}>Select Payment Method</Text>
       <View style={styles.paymentTypeContainer}>
@@ -162,7 +162,7 @@ const PaymentScreen = ({ route, navigation }) => {
       </View>
 
       <TouchableOpacity style={styles.submitButton} onPress={handlePaymentSuccess}>
-        <Text style={styles.submitButtonText}>Pay ${totalAmount.toFixed(2)}</Text>
+        <Text style={styles.submitButtonText}>Pay Rs.{totalAmount.toFixed(2)}</Text>
       </TouchableOpacity>
     </ScrollView>
   );

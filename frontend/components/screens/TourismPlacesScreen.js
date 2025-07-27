@@ -25,6 +25,8 @@ const TourismPlacesScreen = ({ navigation }) => {
       const recommendsRes = await axios.get(`${BASE_URL}/api/tourism/recommended-places`);
       // Correct way to set state with just one argument
       setPlaces(placesRes.data);
+      console.log('Places:', placesRes.data);
+      console.log('Recommended:', recommendsRes.data);
       setRecommended(recommendsRes.data);
     } catch (error) {
       console.error('Fetch error:', error);
@@ -65,7 +67,7 @@ const TourismPlacesScreen = ({ navigation }) => {
       >
         <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
         <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.price}>${item.price_per_night} / Per night</Text>
+        <Text style={styles.price}>Rs.{item.price_per_night} / Per night</Text>
       </TouchableOpacity>
     );
   };

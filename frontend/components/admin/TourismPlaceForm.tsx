@@ -10,6 +10,7 @@ export default function TourismPlaceForm({ onNext }: { onNext: (data: any) => vo
 
   const onSubmit = (data: any) => onNext(data);
   const handleLocationSelected = ({ latitude, longitude }: { latitude: number; longitude: number }) => {
+    console.log('Location selected:', latitude, longitude);
     setValue('latitude', latitude);
     setValue('longitude', longitude);
   };
@@ -18,14 +19,12 @@ export default function TourismPlaceForm({ onNext }: { onNext: (data: any) => vo
   const inputFields = [
     { name: 'name', placeholder: 'Place Name' },
     { name: 'description', placeholder: 'Description' },
-    { name: 'location', placeholder: 'Location' },
     { name: 'category', placeholder: 'Category' },
-    { name: 'language_support', placeholder: 'Languages (e.g. English,Sinhala)' },
+    // { name: 'language_support', placeholder: 'Languages (e.g. English,Sinhala)' },
     { name: 'phone_number', placeholder: 'Phone Number' },
-    { name: 'email', placeholder: 'Email' },
     { name: 'website', placeholder: 'Website' },
     { name: 'price_per_night', placeholder: 'Price Per Night', keyboardType: 'numeric' },
-    { name: 'max_guests', placeholder: 'Max Guests', keyboardType: 'numeric' },
+    
   ];
 
   return (

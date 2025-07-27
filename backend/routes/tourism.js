@@ -34,7 +34,7 @@ console.log("Request body:", req.body); // Debugging line
       longitude
     } = req.body;
 
-    if (!name || !description || !location) {
+    if (!name || !description) {
       return res.status(400).json({ message: 'Missing required fields.' });
     }
 
@@ -44,22 +44,22 @@ console.log("Request body:", req.body); // Debugging line
     // Insert into tourism_places table
     const [placeResult] =  await connection.promise().query(
       `INSERT INTO tourism_places
-      (name, description, location, category, language_support, is_rural, eco_friendly, review_count, phone_number, email, website, price_per_night, max_guests, created_at,latitude, longitude )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      (name, description, category, is_rural, eco_friendly, review_count, phone_number, website, price_per_night, created_at,latitude, longitude )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         name,
         description,
-        location,
+       
         category,
-        language_support,
+       
         is_rural === "true" ? 1 : 0,
         eco_friendly === "true" ? 1 : 0,
         0, // review_count default 0
         phone_number,
-        email,
+      
         website,
         price_per_night,
-        max_guests,
+       
         created_at,
         latitude,
 
@@ -140,6 +140,7 @@ router.get('/tourism-places', async (req, res) => {
         facilities: facilities.map(fac => fac.facility_name),
       };
     }));
+    console.log("Places with details:", placesWithDetails); // Debugging line
     res.status(200).json(placesWithDetails);
 
   } catch (error) {
@@ -219,5 +220,123 @@ router.get('/recommended-places', async (req, res) => {
   }
 });
 
+
+// router.get('/recommended-places/:userId?', async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+//     const limit = parseInt(req.query.limit) || 5;
+
+//     if (userId) {
+//       // Get personalized recommendations using ML
+//       try {
+//         const recommendations = await recommendationEngine.getRecommendations(userId, limit);
+        
+//         if (recommendations.length > 0) {
+//           // Get images for each recommended place
+//           const placesWithImages = await Promise.all(recommendations.map(async (place) => {
+//             const [images] = await connection.promise().query(
+//               `SELECT image_url FROM place_images WHERE tourism_place_id = ?`, 
+//               [place.id]
+//             );
+            
+//             return {
+//               ...place,
+//               images: images.map(img => img.image_url),
+//               recommendation_type: 'personalized'
+//             };
+//           }));
+          
+//           return res.status(200).json(placesWithImages);
+//         }
+//       } catch (mlError) {
+//         console.log('ML recommendation failed, falling back to popular places:', mlError.message);
+//       }
+//     }
+
+//     // Fallback to popular places (original logic)
+//     const popularPlaces = await recommendationEngine.getPopularPlaces(limit);
+//     const placesWithImages = popularPlaces.map(place => ({
+//       ...place,
+//       images: place.images || [],
+//       recommendation_type: 'popular'
+//     }));
+
+//     res.status(200).json(placesWithImages);
+    
+//   } catch (error) {
+//     console.error('Error in recommended places:', error);
+//     res.status(500).json({ message: 'Error fetching recommended places' });
+//   }
+// });
+
+// // NEW: Train ML model endpoint
+// router.post('/train-model', async (req, res) => {
+//   try {
+//     console.log('Starting model training...');
+//     const history = await recommendationEngine.trainModel();
+    
+//     res.status(200).json({
+//       message: 'Model training completed successfully',
+//       training_history: {
+//         epochs: history.history.loss.length,
+//         final_loss: history.history.loss[history.history.loss.length - 1],
+//         final_accuracy: history.history.acc[history.history.acc.length - 1]
+//       }
+//     });
+//   } catch (error) {
+//     console.error('Model training failed:', error);
+//     res.status(500).json({ 
+//       message: 'Model training failed', 
+//       error: error.message 
+//     });
+//   }
+// });
+
+// // NEW: Get user-specific recommendations
+// router.get('/recommendations/user/:userId', async (req, res) => {
+//   try {
+//     const userId = req.params.userId;
+//     const limit = parseInt(req.query.limit) || 10;
+    
+//     if (!userId) {
+//       return res.status(400).json({ message: 'User ID is required' });
+//     }
+
+//     const recommendations = await recommendationEngine.getRecommendations(userId, limit);
+    
+//     // Add images and facilities to recommendations
+//     const enrichedRecommendations = await Promise.all(recommendations.map(async (place) => {
+//       const [images] = await connection.promise().query(
+//         `SELECT image_url FROM place_images WHERE tourism_place_id = ?`, 
+//         [place.id]
+//       );
+      
+//       const [facilities] = await connection.promise().query(
+//         `SELECT facility_name FROM facilities WHERE tourism_place_id = ?`, 
+//         [place.id]
+//       );
+      
+//       return {
+//         ...place,
+//         images: images.map(img => img.image_url),
+//         facilities: facilities.map(fac => fac.facility_name),
+//         recommendation_score: Math.round(place.recommendation_score * 100) / 100 // Round to 2 decimal places
+//       };
+//     }));
+
+//     res.status(200).json({
+//       user_id: userId,
+//       recommendations: enrichedRecommendations,
+//       total_count: enrichedRecommendations.length
+//     });
+
+//   } catch (error) {
+//     console.error('Error getting user recommendations:', error);
+//     res.status(500).json({ 
+//       message: 'Error fetching user recommendations', 
+//       error: error.message 
+//     });
+//   }
+// });
 
 module.exports = router;
